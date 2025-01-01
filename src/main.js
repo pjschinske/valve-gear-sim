@@ -17,6 +17,13 @@ const controls = new OrbitControls( camera, renderer.domElement );
 camera.position.set( 0, 2, 5 );
 controls.update();
 
+window.addEventListener( 'resize', onWindowResize, false );
+function onWindowResize(){
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize( window.innerWidth, window.innerHeight );
+}
+
 //===GUI===
 
 const gui = new GUI();
@@ -45,10 +52,28 @@ scene.add(ambientLight);
 
 //load meshes
 const loader = new GLTFLoader();
-var wheel;
+var wheelRR, wheelRF, wheelLR, wheelLF;
 loader.load(wheelURL, function(gltf) {
     scene.add(gltf.scene);
-    wheel = gltf.scene;
+    wheelRR = gltf.scene;
+    wheelRR.position.set(-1, 0, 0);
+}, gltfOnProgress, gltfOnError);
+loader.load(wheelURL, function(gltf) {
+    scene.add(gltf.scene);
+    wheelRF = gltf.scene;
+    wheelRF.position.set(1, 0, 0);
+}, gltfOnProgress, gltfOnError);
+loader.load(wheelURL, function(gltf) {
+    scene.add(gltf.scene);
+    wheelLR = gltf.scene;
+    wheelLR.rotation.y = Math.PI;
+    wheelLR.position.set(-1, 0, -1.4351);
+}, gltfOnProgress, gltfOnError);
+loader.load(wheelURL, function(gltf) {
+    scene.add(gltf.scene);
+    wheelLF = gltf.scene;
+    wheelLF.rotation.y = Math.PI;
+    wheelLF.position.set(1, 0, -1.4351);
 }, gltfOnProgress, gltfOnError);
 
 // called when the resource is loaded
@@ -76,8 +101,17 @@ function gltfOnError(error) {
 
 function animate() {
     if (settings.run) {
-        if (wheel) {
-            wheel.rotation.z -= settings.speed;
+        if (wheelRR) {
+            wheelRR.rotation.z -= settings.speed;
+        }
+        if (wheelRF) {
+            wheelRF.rotation.z -= settings.speed;
+        }
+        if (wheelLR) {
+            wheelLR.rotation.z += settings.speed;
+        }
+        if (wheelLF) {
+            wheelLF.rotation.z += settings.speed;
         }
     }
 
